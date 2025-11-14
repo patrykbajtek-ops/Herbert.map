@@ -1,14 +1,14 @@
 
+
 <!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
     <meta charset="utf-8">
     <title>Mapa Szkół Herbertowskich</title>
-    https://unpkg.com/leaflet/dist/leaflet.css
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
     https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css
-    https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; display: flex; }
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster    body { font-family: Arial, sans-serif; margin: 0; padding: 0; display: flex; }
         #sidebar {
             width: 300px;
             background: #f9f9f9;
@@ -43,8 +43,10 @@
     </div>
     <div id="map"></div>
 
-    https://unpkg.com/leaflet/dist/leaflet.js</script>
-    https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js</script>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js <!-- MarkerCluster JS -->
+    <script srckg.com/leaflet.markercluster/dist/leaflet.markercluster.js</script>
+
     <script>
         var map = L.map('map').setView([52.0, 19.0], 6);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -115,3 +117,4 @@
     </script>
 </body>
 </html>
+
