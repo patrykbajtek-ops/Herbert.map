@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Mapa Szkół Herbertowskich</title>
+    https://unpkg.com/leaflet/dist/leaflet.css
+    https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css
+    https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; display: flex; }
+        #sidebar {
+            width: 300px;
+            background: #f9f9f9;
+            border-right: 1px solid #ccc;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        #map { flex: 1; height: 100vh; }
+        h1 { text-align: center; margin-bottom: 10px; }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .school-item {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+        }
+        .school-item:hover {
+            background: #eee;
+        }
+    </style>
+</head>
+<body>
+    <div id="sidebar">
+        <h1>Szukaj szkoły</h1>
+        <input type="text" id="search" placeholder="Wpisz nazwę szkoły...">
+        <div id="school-list"></div>
+    </div>
+    <div id="map"></div>
+
+    https://unpkg.com/leaflet/dist/leaflet.js</script>
+    https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js</script>
+    <script>
+        var map = L.map('map').setView([52.0, 19.0], 6);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        var schools = [
+            {"name":"Społeczne Gimnazjum nr 1 w Krakowie","address":"ul. Karmelicka 45, 31-128 Kraków","lat":50.0647,"lon":19.9450,"link":""},
+            {"name":"XCIX Liceum Ogólnokształcące w Warszawie","address":"ul. Fundamentowa 38/42, 04-036 Warszawa","lat":52.2297,"lon":21.0122,"link":"https://herbert99lo.edu.pl"},
+            {"name":"CV Liceum Ogólnokształcące w Warszawie","address":"ul. Marszałkowska 138, 00-004 Warszawa","lat":52.2297,"lon":21.0122,"link":""},
+            {"name":"Zespół Szkół Ogólnokształcących nr 1 w Lublinie","address":"ul. Radziwiłłowska 5, 20-080 Lublin","lat":51.2465,"lon":22.5684,"link":"http://www.herbertklub.14lo.lublin.pl"},
+            {"name":"II Liceum Ogólnokształcące w Brzegu","address":"ul. Jana Pawła II 7, 49-300 Brzeg","lat":50.8600,"lon":17.4677,"link":""},
+            {"name":"XX Liceum Ogólnokształcące w Gdańsku","address":"ul. Pestalozziego 7, 80-445 Gdańsk","lat":54.3520,"lon":18.6466,"link":"https://zso12.edu.gdansk.pl/pl/page/klub-herbertowskich-szkol"},
+            {"name":"V Liceum Ogólnokształcące w Słupsku","address":"ul. Szarych Szeregów 15, 76-200 Słupsk","lat":54.4641,"lon":17.0287,"link":"https://herbert.trzebiatow.pl/category/o-szkole/klub-herbertowskich-szkol/"},
+            {"name":"III Liceum Ogólnokształcące w Żorach","address":"ul. Powstańców 6, 44-240 Żory","lat":50.0450,"lon":18.7006,"link":""},
+            {"name":"Gimnazjum nr 1 w Żerkowie","address":"ul. Kolejowa 1, 63-210 Żerków","lat":52.0667,"lon":17.5667,"link":""},
+            {"name":"Zespół Szkół i Placówek Oświatowych BSTO w Bełchatowie","address":"ul. Czapliniecka 96, 97-400 Bełchatów","lat":51.3688,"lon":19.3564,"link":""},
+            {"name":"I Społeczne LO i Społeczne Gimnazjum nr 2 w Częstochowie","address":"ul. Kościuszki 14, 42-200 Częstochowa","lat":50.8118,"lon":19.1203,"link":""},
+            {"name":"Zespół Szkół Ponadgimnazjalnych w Trzebiatowie","address":"ul. Parkowa 2, 72-320 Trzebiatów","lat":54.0610,"lon":15.2646,"link":"https://herbert.trzebiatow.pl/category/o-szkole/klub-herbertowskich-szkol/"},
+            {"name":"Gimnazjum we Wronkach","address":"ul. Mickiewicza 1, 64-510 Wronki","lat":52.7100,"lon":16.3667,"link":""},
+            {"name":"Zespół Szkół Społecznych nr 1 w Kołobrzegu","address":"ul. Mazowiecka 1, 78-100 Kołobrzeg","lat":54.1750,"lon":15.5833,"link":""},
+            {"name":"Polska Szkoła Dokształcająca w Copiague (Nowy Jork)","address":"Copiague, NY, USA","lat":40.6815,"lon":-73.3935,"link":""},
+            {"name":"Gimnazjum nr 19 we Wrocławiu","address":"ul. Kiełczowska 43, 51-315 Wrocław","lat":51.1079,"lon":17.0385,"link":""},
+            {"name":"Zespół Szkół Licealnych w Słubicach","address":"ul. Wojska Polskiego 1, 69-100 Słubice","lat":52.3500,"lon":14.5667,"link":""},
+            {"name":"Gimnazjum nr 6 w Krakowie","address":"ul. Białoprądnicka 13, 31-221 Kraków","lat":50.0647,"lon":19.9450,"link":""},
+            {"name":"Zespół Szkół Ponadgimnazjalnych ‘COGITO’ w Siemianowicach Śląskich","address":"ul. Matejki 5, 41-100 Siemianowice Śląskie","lat":50.3270,"lon":19.0290,"link":"http://khs.mmj.pl/"},
+            {"name":"Gimnazjum nr 4 przy Zespole Szkół nr 1 w Elblągu","address":"ul. Korczaka 34, 82-300 Elbląg","lat":54.1522,"lon":19.4088,"link":""}
+        ];
+
+        var markers = L.markerClusterGroup();
+        var markerList = [];
+
+        schools.forEach(function(school) {
+            var marker = L.marker([school.lat, school.lon]);
+            var popupContent = '<b>' + school.name + '</b><br>' + school.address;
+            if (school.link) {
+                popupContent += '<br><a href="' + school.link + '" target="_blank">Strona szkoły</a>';
+            }
+            marker.bindPopup(popupContent);
+            markers.addLayer(marker);
+            markerList.push({marker: marker, data: school});
+        });
+
+        map.addLayer(markers);
+
+        var schoolListDiv = document.getElementById('school-list');
+        function renderList(filterText = '') {
+            schoolListDiv.innerHTML = '';
+            markerList.forEach(function(item) {
+                if (item.data.name.toLowerCase().includes(filterText.toLowerCase())) {
+                    var div = document.createElement('div');
+                    div.className = 'school-item';
+                    div.innerHTML = '<b>' + item.data.name + '</b><br>' + item.data.address;
+                    div.onclick = function() {
+                        map.setView([item.data.lat, item.data.lon], 14);
+                        item.marker.openPopup();
+                    };
+                    schoolListDiv.appendChild(div);
+                }
+            });
+        }
+
+        renderList();
+
+        document.getElementById('search').addEventListener('input', function() {
+            renderList(this.value);
+        });
+    </script>
+</body>
+</html>
